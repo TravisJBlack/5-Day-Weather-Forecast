@@ -14,27 +14,26 @@
     </header>
     <main>
         <div class="d-flex">
-            <div class="col-4 pl-0 py-3 border-bottom border-dark left">
+            <div class="col-4 px-0 py-3 mb-3 border-bottom border-dark left">
                 <h3>Search for a City:</h2>
                 <div>
                     <input class="w-100 mb-3" id="city"></input>
-                    <a class="w-100 btn btn-info" id="save">Search</a>
-                    <div id="searched-cities">
-
-                    </div>
+                    <a class="w-100 btn btn-info" type="text" id="save">Search</a>
                 </div>
             </div>
-            <div class="d-inline col-12">  
-                <sectione class="p-3">
-                    <p>hello</p>
-                </section>
+            <div class="d-inline col-8" id="forcast">           
             </div>
             
         </div>
-        <div>
-            <p>hello2</p>
+        <div class="d-flex">
+            <div class="col-4 px-0 mb-3" id="searched-cities">
+            </div>
+            <div class="d-inline col-8 p-3 mr-3">
+                <h5>5-Day Forecast:</h5>
+            </div>
         </div>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script src="./assets/js/weather.js"></script>
 </body>
 </html>

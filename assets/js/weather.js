@@ -1,18 +1,21 @@
 const searchedEl = document.getElementById('searched-cities');
 const cityInputEL = document.getElementById('city');
 const searchButton = document.getElementById('save');
-
-
+const forcast = document.getElementById('forcast');
+const searchedLocations = JSON.parse(localStorage.getItem('locations')) || [];
 function init() {
-    const serchedLocations = JSON.parse(localStorage.getItem('locations')) || [];
+    
+    console.log(searchedLocations);
+     if(searchedLocations.length === 0){
+         return;
+    }
 
-    // if(searchedLocations.length === 0){
-    //     return;
-    // }
-
-    // for(const location of searchedLocations){
-
-    // }
+    for(let i = 0; i < searchedLocations.length; i++){
+      const cityContainer = document.createElement('button');
+      cityContainer.classList = 'w-100 previous-search';
+      cityContainer.textContent = `${searchedLocations[i]}`;
+      searchedEl.append(cityContainer);
+    }
 }
 
 init();
@@ -20,39 +23,28 @@ init();
 const citySubmit = function (event){
     event.preventDefault();
 
-    const enterCity = cityInputEL.ariaValueMax.trim();
-
+    const enterCity = cityInputEL.value.trim();
+    console.log(enterCity);
     if(enterCity) {
-        getDayforcast(enterCity);
+        getLatLon(enterCity);
     } else {
         alert('Please enter a city');
     }
-
-    return enterCity;
 
 };
 
 
 
 //getting data from api server
-const getDayforcast = function (event, enterCity){
-     event.preventDefault();
-
-    // const enterCity = cityInputEL.value.trim();
-
-    // if(enterCity) {
-    //     get5Dayforcast(enterCity);
-    // } else {
-    //     alert('Please enter a city');
-    // }
+const getLatLon = function (enterCity){
     console.log(enterCity);
-    const apiKey ='3b52e6db8fc05a700ab6ed26ec8829e0'
-    const apiUrl = `api.openweathermap.org/data/2.5/weather?q=houston&APPID=${apiKey}`;
+    const apiKey = '3b52e6db8fc05a700ab6ed26ec8829e0';
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${enterCity}&APPID=${apiKey}`;
 
     fetch(apiUrl).then(function(response) {
         if (response.ok){
             response.json().then(function(data){
-                console.log(data);
+                get5DayForcast(data.coord.lat, data.coord.lon)
             });
         }   else {
             alert(`Error:${response.status}`);
@@ -60,21 +52,57 @@ const getDayforcast = function (event, enterCity){
     });
 };
 
-searchButton.addEventListener('click', getDayforcast);
+const get5DayForcast = function (lat, lon){
+    const apiKey = '3b52e6db8fc05a700ab6ed26ec8829e0';
+    const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&esclude=hourly,alerts&APPID=${apiKey}&units=imperial`;
 
+    fetch(apiUrl)
+        .then(function(response) {
+        if (response.ok){
+            response.json().then(function(data){
+                searchedLocations.push(data.city.name);
+                localStorage.setItem('locations',JSON.stringify(searchedLocations));
+                displayForcast(data.city.name, data.list)
+            });
+        }   else {
+            alert(`Error:${response.status}`);
+        }
+    });
+};
 
-//not part of project just using for refereence 
+const displayForcast = function (city, weatherList){
+    let dateFormat = dayjs(weatherList[0].dt_txt).format('(M/D/YYYY)');
+    const weatherContainer = document.createElement('section');
+    weatherContainer.classList = 'border border-dark p-3 mr-3';
+    forcast.appendChild(weatherContainer);
 
-// const getFeaturedRepos = function (language) {
-//     const apiUrl = `https://api.github.com/search/repositories?q=${language}+is:featured&sort=help-wanted-issues`;
-  
-//     fetch(apiUrl).then(function (response) {
-//       if (response.ok) {
-//         response.json().then(function (data) {
-//           displayRepos(data.items, language);
-//         });
-//       } else {
-//         alert(`Error:${response.statusText}`);
-//       }
-//     });
-//   };
+    const cityContainer = document.createElement('button');
+    cityContainer.classList = 'w-100';
+    cityContainer.textContent = `${city}`;
+    searchedEl.append(cityContainer);
+    
+    const title = document.createElement('h4');
+    title.textContent = `${city} ${dateFormat}`;
+    weatherContainer.append(title);
+
+    const temp = document.createElement('p');
+    temp.textContent = `Temp: ${weatherList[0].main.temp}°F`;
+    weatherContainer.append(temp);
+
+    const wind = document.createElement('p');
+    wind.textContent = `Wind: ${weatherList[0].wind.speed} MPH`;
+    weatherContainer.append(wind);
+
+    const humidity = document.createElement('p');
+    humidity.textContent = `Humidity: ${weatherList[0].main.humidity} %`;
+    weatherContainer.append(humidity);
+    
+    // const realList = JSON.parse(weatherList);
+    // console.log(realList);
+    // for (let i =8; i < realList.length; i += 8) {
+    //     console.log(`${realList[i]}`);
+    // }
+    
+};
+
+searchButton.addEventListener('click', citySubmit);
