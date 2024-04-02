@@ -33,13 +33,16 @@ const citySubmit = function (event){
 
     if(enterCity) {
     const cityContainer = document.createElement('button');
-    cityContainer.classList = `w-100 btn btn-info bg-secondary border-0 my-1 data-${enterCity}`;
+    cityContainer.classList = `w-100 btn btn-info bg-secondary border-0 my-1 data-city = ${enterCity}`;
     cityContainer.setAttribute('id','city');
     cityContainer.textContent = `${enterCity}`;
     searchedEl.prepend(cityContainer);
-        searchedLocations.push(enterCity);
-        localStorage.setItem('locations',JSON.stringify(searchedLocations));
+    searchedLocations.push(enterCity);
+    localStorage.setItem('locations',JSON.stringify(searchedLocations));
+    cityContainer.addEventListener('click', function(){
         getLatLon(enterCity);
+    })
+    getLatLon(enterCity);
     } else {
         alert('Please enter a city');
     }
