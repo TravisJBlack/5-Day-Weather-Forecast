@@ -4,7 +4,6 @@ const cityInputEL = document.getElementById('city');
 const searchButton = document.getElementById('save');
 const forcast = document.getElementById('forcast');
 const dailyForcast = document.getElementById('daily-forecast');
-const historyButton = document.getElementById('#city');
 
 // declare gloabl variable to hold previous searches 
 const searchedLocations = JSON.parse(localStorage.getItem('locations')) || [];
@@ -15,9 +14,11 @@ function init() {
     for(let i = 0; i < searchedLocations.length; i++){
       const cityContainer = document.createElement('button');
       cityContainer.classList = `w-100 btn btn-info bg-secondary border-0 my-1 data-${searchedLocations[i]}`;
-      cityContainer.setAttribute('id','city');
       cityContainer.textContent = `${searchedLocations[i]}`;
       searchedEl.prepend(cityContainer);
+      cityContainer.addEventListener('click', function(){
+        getLatLon(searchedLocations[i]);
+    })
     }
 };
 
@@ -29,13 +30,10 @@ const citySubmit = function (event){
 
     const cityData = cityInputEL.value.trim();
     const enterCity = cityData.charAt(0).toUpperCase()+cityData.slice(1);
-    console.log(enterCity);
 
-    
-    
     if(enterCity) {
     const cityContainer = document.createElement('button');
-    cityContainer.classList = `w-100 btn btn-info bg-secondary border-0 data-${enterCity}`;
+    cityContainer.classList = `w-100 btn btn-info bg-secondary border-0 my-1 data-${enterCity}`;
     cityContainer.setAttribute('id','city');
     cityContainer.textContent = `${enterCity}`;
     searchedEl.prepend(cityContainer);
@@ -115,10 +113,11 @@ const displayForcast = function (city, weatherList){
     humidity.textContent = `Humidity: ${weatherList[0].main.humidity} %`;
     weatherContainer.append(humidity);
     const array = [];
-    for (let i = 0; i < weatherList.length; i +=8){
+    for (let i = 0; i < weatherList.length; i += 8){
         
         array.push(dayjs(weatherList[i].dt_txt).format('M/D/YYYY'), weatherList[i].main.temp, weatherList[i].wind.speed, weatherList[i].main.humidity);
     }
+    //array.push(dayjs(weatherList[39].dt_txt).format('M/D/YYYY'), weatherList[39].main.temp, weatherList[39].wind.speed, weatherList[39].main.humidity);
     while (dailyForcast.hasChildNodes()){
         dailyForcast.removeChild(dailyForcast.firstChild);
     }
@@ -135,9 +134,7 @@ const displayForcast = function (city, weatherList){
                                 <p>Humidity: ${array[i+3]}%<p>`
         dailyForcast.appendChild(dailyCity);
     }
-    
 };
-
 
 //if no cities are in storage does nothing but if previous cities are avaialbe then it will run through functions to display the last one searched
 if(searchedLocations.length === 0){
@@ -148,7 +145,3 @@ console.log('no city');
 
 //waits for a click on the search button to start the fucntions 
 searchButton.addEventListener('click', citySubmit);
-
-// historyButton.addEventListener('click', function(){
-//     console.log('hello');
-// })

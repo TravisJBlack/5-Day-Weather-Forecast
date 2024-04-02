@@ -14,5 +14,5 @@ Click inside the text field and enter in the city of your choose. Once done with
 
 Access Site: http://travisjblack.github.io/5-Day-Weather-Forecast/
 
-![Screenshot of webpage]()
-![Screenshot of webpage]()
+![Screenshot of webpage](/assets/images/weatherDashboard.png)
+![Screenshot of webpage](/assets/images/WeatherDashboardHistory.png)
